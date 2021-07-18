@@ -4,8 +4,8 @@ using System.Text;
 
 namespace AppartmentApp.DataAccess.Entities
 {
-    public  class ApartmentType:BaseEntities
+    public  class AppartmentType:BaseEntities
     {
-        public string NameTape { get; set; }
+        public string NameType { get; set; }
     }
 }
