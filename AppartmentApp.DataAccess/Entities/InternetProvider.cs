@@ -6,6 +6,7 @@ namespace AppartmentApp.DataAccess.Entities
 {
   public class InternetProvider:BaseEntities
     {
-        public string NameProvider { get; set; }
+        public string Name { get; set; }
+        public ICollection<Appartament> Appartaments { get; set; }
     }
 }

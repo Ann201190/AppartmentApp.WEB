@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AppartmentApp.DataAccess\AppartmentApp.DataAccess.csproj" />
+    <ProjectReference Include="..\AppartmentApp.VewModels\AppartmentApp.VewModels.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\AppartmentApp.Business\AppartmentApp.Business.csproj" />
+    <ProjectReference Include="..\AppartmentApp.VewModels\AppartmentApp.VewModels.csproj" />
   </ItemGroup>
 
 
