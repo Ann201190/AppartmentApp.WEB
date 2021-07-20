@@ -19,98 +19,34 @@ namespace AppartmentApp.DataAccess.Repositories
         {
             _appContext = new AppConnection();
         }
-
-
-        /* public List<Appartament> Get()
-         {
-             using (var connection = new SqlConnection(_appContext._connectionString))
-             {
-                  var sql = @"SELECT a.AppartamentId, a.Price, a.Name, a.RoomNumber, a.Area , i.Name as InternetProvider FROM  Appartaments a JOIN InternetProviders i ON a.InternetProvider = i.InternetProvidersId";              
-
-                  var data = connection.Query<Appartament, InternetProvider, Appartament>(sql, (appartament, internetProvider) => {appartament.InternetProvider = internetProvider;
-                      return appartament; }, splitOn: "InternetProvidersId").ToList();
-                 return data;
-             }
-         }*/
-
         public List<Appartament> Get()
         {
             using (var connection = new SqlConnection(_appContext._connectionString))
             {
-                var sql = @"SELECT a.AppartamentId, a.Price, a.Name, a.RoomNumber, a.Area , i.Name as InternetProvider FROM  Appartaments a JOIN InternetProviders i ON a.InternetProvider = i.InternetProvidersId";
+                var sql = @"SELECT a.AppartamentId, a.Price, a.Name, a.RoomNumber, a.Area, i.InternetProviderId,  i.Name,ad.AdressId, ad.Country, ad.Region, ad.City, ad.Street, ad.HouseNumber,ad.AppartmentNumber, ad.EntranceNumber, i.InternetProviderId, t.AppartmentTypeId, t.NameType, am.AmenityId, am.Name FROM  Appartaments a 
+                                    JOIN InternetProviders i  ON a.InternetProviderId = i.InternetProviderId
+                                    JOIN Adresses ad ON a.AdressId = ad.AdressId
+                                    JOIN AppartmentTypes t ON a.AppartmentTypeId = t.AppartmentTypeId
+                                    JOIN AppartamentsAmenites aa ON a.AppartamentId = aa.AppartamentId
+                                    JOIN Amenites am On am.AmenityId = aa.AmenityId";
 
-                var res = connection.Query<Appartament, InternetProvider, Appartament>(sql, (appartament, internetProvider) =>
-                {
+                var data = connection.Query<Appartament, InternetProvider, Adress, AppartmentType, Amenity, Appartament>(sql, (appartament, internetProvider, adress, appartmentType, amenity) => {
                     appartament.InternetProvider = internetProvider;
+                    appartament.Adress = adress;
+                    appartament.AppartmentType = appartmentType;
+                    appartament.Amenites.Add(amenity);
                     return appartament;
-                }, splitOn: "InternetProvidersId");
+                }, splitOn: "InternetProviderId, AdressId, AppartmentTypeId, AmenityId");
+
+                var result = data.GroupBy(a => a.AppartamentId).Select(g =>
+                {
+                    var groupedAmenity = g.First();
+                    groupedAmenity.Amenites = g.Select(a => a.Amenites.Single()).ToList();
+                    return groupedAmenity;
+                }).ToList();
+                return result;
             }
-
         }
-         
-
-        /*   public List<Appartament> Get()
-           {
-               List<Appartament> appartament = new List<Appartament>();
-               try
-               {
-                   using (SqlConnection sqlConnection = new SqlConnection(_appContext._connectionString))
-                   {
-                       sqlConnection.Open();
-
-                       using (SqlCommand command = new SqlCommand("Select * from Appartaments", sqlConnection))
-                       {
-                           using (SqlDataReader dataReader = command.ExecuteReader())
-                           {
-                               while (dataReader.Read())
-                               {
-                                   Appartament temp = new Appartament();
-                                   temp.Id =Convert.ToInt32(dataReader.GetValue(0));
-                                   temp.Price = Convert.ToSingle(dataReader.GetValue(1));
-                                   temp.Name = dataReader.GetValue(2).ToString();
-                                   temp.RoomNumber = Convert.ToInt32(dataReader.GetValue(3));
-                                   temp.Area = Convert.ToSingle(dataReader.GetValue(4));
-                                   temp.InternetProvider = (dataReader.GetValue(5) as InternetProvider);
-                                   temp.Adress = (dataReader.GetValue(6) as Adress);
-                                   temp.TypeOfAppartment = (dataReader.GetValue(7) as AppartmentType);
-                                   appartament.Add(temp);
-                               }
-                               return appartament;
-                           }
-                       }
-                   }
-               }
-               catch (Exception ex)
-               {
-                   throw new Exception(ex.Message);
-               }
-           }*/
-
-
-
-
-
-        /* public async Task<List<Appartament>> Get()
-         {
-
-             using (SqlConnection connection = new SqlConnection())
-             {
-                 try
-                 {
-                     connection.ConnectionString = _appContext._connectionString;
-                     connection.Open();
-                 }
-                 catch (Exception)
-                 {
-                     connection.Close();
-                 }
-                 SqlCommand command = new SqlCommand();
-                 var result = await connection.QueryAsync<Appartament>("Select * from Appartaments", commandType: CommandType.Text);
-                 return result.ToList();
-             }
-         }*/
-
-
     }
 }
 

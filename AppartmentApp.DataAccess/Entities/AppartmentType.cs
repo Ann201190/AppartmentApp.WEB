@@ -4,8 +4,9 @@ using System.Text;
 
 namespace AppartmentApp.DataAccess.Entities
 {
-    public  class AppartmentType:BaseEntities
+    public  class AppartmentType
     {
+        public int AppartmentTypeId { get; set; }
         public string NameType { get; set; }
     }
 }

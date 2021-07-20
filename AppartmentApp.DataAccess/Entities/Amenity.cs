@@ -4,9 +4,9 @@ using System.Text;
 
 namespace AppartmentApp.DataAccess.Entities
 {
-   public class Amenity:BaseEntities
+   public class Amenity
     {
-        public string Name { get; set; }
-        public IEnumerable<Appartament> Appartaments { get; set; } = new List<Appartament>();
+        public int AmenityId { get; set; }
+        public string Name { get; set; }   
     }
 }

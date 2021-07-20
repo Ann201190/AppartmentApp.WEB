@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+
 namespace AppartmentApp.Business.Services
 {
   public  class AppartmentsService
@@ -13,7 +14,6 @@ namespace AppartmentApp.Business.Services
         {
             _appartmentrepository = appartmentrepository;
         }
-
         public IEnumerable<GetAppartmentModel> Get()
         {
             var appartments = _appartmentrepository.Get();
@@ -22,7 +22,7 @@ namespace AppartmentApp.Business.Services
             {
                 models.Add(new GetAppartmentModel
                 {
-                    Id = item.Id,
+                    Id = item.AppartamentId,
                     Name = item.Name,
                     Area = item.Area,
                     Amenites = item.Amenites,
@@ -30,11 +30,10 @@ namespace AppartmentApp.Business.Services
                     InternetProvider = item.InternetProvider,
                     Price = item.Price,
                     RoomNumber = item.RoomNumber,
-                    TypeOfAppartment = item.TypeOfAppartment
+                    TypeOfAppartment = item.AppartmentType
                 });
             }
             return models;
         }
-
     }
 }

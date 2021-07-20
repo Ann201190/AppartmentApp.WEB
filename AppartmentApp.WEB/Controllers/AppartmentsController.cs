@@ -13,10 +13,9 @@ namespace AppartmentApp.WEB.Controllers
     public class AppartmentsController : Controller
     {
         public readonly AppartmentsService _appartmentService;
-
         public AppartmentsController()
         {           
-            _appartmentService = new AppartmentsService( new AppartmentsRepository());
+            _appartmentService = new AppartmentsService(new AppartmentsRepository());
         }
 
         [HttpGet]
