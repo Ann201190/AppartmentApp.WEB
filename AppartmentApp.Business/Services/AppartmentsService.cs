@@ -27,11 +27,11 @@ namespace AppartmentApp.Business.Services
 
             foreach (var item in appartments)
             {
-               List<GetAmenityModel> tempAmenity = new List <GetAmenityModel>();
+               List<GetAmenityModel> amenityModel = new List <GetAmenityModel>();
                
                 foreach (var i in item.Amenites)
                 {
-                    tempAmenity.Add(new GetAmenityModel
+                    amenityModel.Add(new GetAmenityModel
                     { 
                         Name = i.Name, 
                         AmenityId = i.AmenityId
@@ -43,7 +43,7 @@ namespace AppartmentApp.Business.Services
                     Id = item.AppartamentId,
                     Name = item.Name,
                     Area = item.Area,
-                    Amenites = tempAmenity,
+                    Amenites = amenityModel,
                     Adress = new GetAdressModel
                     {
                         City = item.Adress.City,
