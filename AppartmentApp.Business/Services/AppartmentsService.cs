@@ -24,7 +24,6 @@ namespace AppartmentApp.Business.Services
             var appartments = _appartmentrepository.Get();
             var models = new List<GetAppartmentModel>();
             
-
             foreach (var item in appartments)
             {
                List<GetAmenityModel> amenityModel = new List <GetAmenityModel>();
@@ -65,7 +64,6 @@ namespace AppartmentApp.Business.Services
                     {
                         NameType = item.AppartmentType.NameType
                     }
-
                 });
             }
             return models;
