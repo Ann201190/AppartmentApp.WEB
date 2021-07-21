@@ -1,4 +1,5 @@
 ﻿using AppartmentApp.Business.Services;
+using AppartmentApp.DataAccess.Entities;
 using AppartmentApp.DataAccess.Repositories;
 using AppartmentApp.VewModels.Appartments;
 using Microsoft.AspNetCore.Mvc;

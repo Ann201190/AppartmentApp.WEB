@@ -47,8 +47,9 @@ namespace AppartmentApp.DataAccess.Repositories
                 return result;
             }
         }
+
+
+       
     }
 }
-
-
 
