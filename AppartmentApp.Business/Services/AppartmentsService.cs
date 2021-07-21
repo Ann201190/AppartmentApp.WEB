@@ -35,5 +35,5 @@ namespace AppartmentApp.Business.Services
             }
             return models;
         }
-    }
+   }
 }
