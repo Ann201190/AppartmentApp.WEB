@@ -12,7 +12,7 @@ using System.Text;
 
 namespace AppartmentApp.Business.Services
 {
-    public class AppartmentsService
+    public class AppartmentsService ///
     {
         private readonly AppartmentsRepository _appartmentrepository;
         public AppartmentsService(AppartmentsRepository appartmentrepository)
