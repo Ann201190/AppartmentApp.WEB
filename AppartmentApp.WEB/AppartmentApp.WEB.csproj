@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AppartmentApp.Business\AppartmentApp.Business.csproj" />
     <ProjectReference Include="..\AppartmentApp.VewModels\AppartmentApp.VewModels.csproj" />
   </ItemGroup>

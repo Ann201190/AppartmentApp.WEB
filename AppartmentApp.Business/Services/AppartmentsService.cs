@@ -19,32 +19,36 @@ namespace AppartmentApp.Business.Services
         {
             _appartmentrepository = appartmentrepository;
         }
-        public IEnumerable<GetAppartmentModel> Get()
+        public IEnumerable<GetAppartmentViewModel> Get()
         {
             var appartments = _appartmentrepository.Get();
-            var models = new List<GetAppartmentModel>();
-            
+            var models = new List<GetAppartmentViewModel>();
+
             foreach (var item in appartments)
             {
-               List<GetAmenityModel> amenityModel = new List <GetAmenityModel>();
-               
+                List<AmenityModel> amenityModel = new List<AmenityModel>();
+
                 foreach (var i in item.Amenites)
                 {
-                    amenityModel.Add(new GetAmenityModel
-                    { 
-                        Name = i.Name, 
-                        AmenityId = i.AmenityId
-                    });
+                    if (i != null)
+                    {
+                        amenityModel.Add(new AmenityModel
+                        {
+                            Name = i.Name,
+                            AmenityId = i.AmenityId
+                        });
+                    }
                 }
 
-                models.Add(new GetAppartmentModel
+                models.Add(new GetAppartmentViewModel
                 {
                     Id = item.AppartamentId,
                     Name = item.Name,
                     Area = item.Area,
                     Amenites = amenityModel,
-                    Adress = new GetAdressModel
+                    Adress = new AdressModel
                     {
+                        AdressId = item.Adress.AdressId,
                         City = item.Adress.City,
                         Country = item.Adress.Country,
                         Region = item.Adress.Region,
@@ -53,20 +57,64 @@ namespace AppartmentApp.Business.Services
                         EntranceNumber = item.Adress.EntranceNumber,
                         HouseNumber = item.Adress.HouseNumber
                     },
-                    InternetProvider = new GetInternetProviderModel
+                    InternetProvider = new InternetProviderModel
                     {
+                        InternetProviderId = item.InternetProvider.InternetProviderId,
                         Name = item.InternetProvider.Name
                     },
                     Price = item.Price,
                     RoomNumber = item.RoomNumber,
 
-                    TypeOfAppartment = new GetAppartmentTypeModel
+                    TypeOfAppartment = new AppartmentTepyModel
                     {
+                        AppartmentTypeId = item.AppartmentType.AppartmentTypeId,
                         NameType = item.AppartmentType.NameType
                     }
                 });
             }
             return models;
-        }   
+        }
+
+        public bool Post(PostAppartmentViewModel postAppartmentModel)
+        {
+            AppartmentType appartmentType = new AppartmentType();
+            appartmentType.AppartmentTypeId = postAppartmentModel.AppartmentTypeId;
+
+            InternetProvider internetProvider = new InternetProvider();
+            internetProvider.InternetProviderId = postAppartmentModel.InternetProviderId;
+
+            Adress adress = new Adress()
+            {
+                City = postAppartmentModel.Adress.City,
+                Country = postAppartmentModel.Adress.Country,
+                Region = postAppartmentModel.Adress.Region,
+                Street = postAppartmentModel.Adress.Street,
+                AppartmentNumber = postAppartmentModel.Adress.AppartmentNumber,
+                EntranceNumber = postAppartmentModel.Adress.EntranceNumber,
+                HouseNumber = postAppartmentModel.Adress.HouseNumber
+            };
+
+            List<Amenity> amenity = new List<Amenity>();
+            foreach (var a in postAppartmentModel.AmenityId)
+            {
+                amenity.Add(new Amenity()
+                {
+                    AmenityId = a,
+                });
+            }
+
+            Appartament appartament = new Appartament()
+            {
+                Name = postAppartmentModel.Name,
+                Area = postAppartmentModel.Area,
+                Price = postAppartmentModel.Price,
+                RoomNumber = postAppartmentModel.RoomNumber,
+                Amenites = amenity,
+                Adress = adress,
+                AppartmentType = appartmentType,
+                InternetProvider = internetProvider,
+            };
+            return _appartmentrepository.Post(appartament);
+        }
     }
 }

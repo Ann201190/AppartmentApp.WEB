@@ -2,6 +2,7 @@
 using AppartmentApp.DataAccess.Entities;
 using Dapper;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,18 +20,19 @@ namespace AppartmentApp.DataAccess.Repositories
         {
             _appContext = new AppConnection();
         }
-        public List<Appartament> Get()
+        public  List<Appartament> Get()
         {
             using (var connection = new SqlConnection(_appContext._connectionString))
             {
                 var sql = @"SELECT a.AppartamentId, a.Price, a.Name, a.RoomNumber, a.Area, i.InternetProviderId,  i.Name,ad.AdressId, ad.Country, ad.Region, ad.City, ad.Street, ad.HouseNumber,ad.AppartmentNumber, ad.EntranceNumber, i.InternetProviderId, t.AppartmentTypeId, t.NameType, am.AmenityId, am.Name FROM  Appartaments a 
-                                    JOIN InternetProviders i  ON a.InternetProviderId = i.InternetProviderId
-                                    JOIN Adresses ad ON a.AdressId = ad.AdressId
-                                    JOIN AppartmentTypes t ON a.AppartmentTypeId = t.AppartmentTypeId
-                                    JOIN AppartamentsAmenites aa ON a.AppartamentId = aa.AppartamentId
-                                    JOIN Amenites am On am.AmenityId = aa.AmenityId";
+                                   LEFT JOIN InternetProviders i  ON a.InternetProviderId = i.InternetProviderId
+                                   LEFT JOIN Adresses ad ON a.AdressId = ad.AdressId
+                                   LEFT JOIN AppartmentTypes t ON a.AppartmentTypeId = t.AppartmentTypeId
+                                   LEFT JOIN AppartamentsAmenites aa ON a.AppartamentId = aa.AppartamentId
+                                   LEFT JOIN Amenites am On am.AmenityId = aa.AmenityId";
 
-                var data = connection.Query<Appartament, InternetProvider, Adress, AppartmentType, Amenity, Appartament>(sql, (appartament, internetProvider, adress, appartmentType, amenity) => {
+                var data = connection.Query<Appartament, InternetProvider, Adress, AppartmentType, Amenity, Appartament>(sql, (appartament, internetProvider, adress, appartmentType, amenity) =>
+                {
                     appartament.InternetProvider = internetProvider;
                     appartament.Adress = adress;
                     appartament.AppartmentType = appartmentType;
@@ -38,18 +40,57 @@ namespace AppartmentApp.DataAccess.Repositories
                     return appartament;
                 }, splitOn: "InternetProviderId, AdressId, AppartmentTypeId, AmenityId");
 
-                var result = data.GroupBy(a => a.AppartamentId).Select(g =>
+                var result =  data.GroupBy(a => a.AppartamentId).Select(g =>
                 {
                     var groupedAmenity = g.First();
                     groupedAmenity.Amenites = g.Select(a => a.Amenites.Single()).ToList();
                     return groupedAmenity;
                 }).ToList();
+
                 return result;
             }
         }
 
+        public bool Post(Appartament appartament)
+        {
+            using (var connection = new SqlConnection(_appContext._connectionString))
+            {
+                appartament.Adress.AdressId = connection.QuerySingle<int>(@"INSERT INTO Adresses ([Country], [Region], [City], [AppartmentNumber], [HouseNumber], [EntranceNumber], [Street]) VALUES (@Country, @Region, @City, @AppartmentNumber, @HouseNumber, @EntranceNumber, @Street); SELECT CAST(SCOPE_IDENTITY() as int)",
+                      new
+                      {
+                          Country = appartament.Adress.Country,
+                          Region = appartament.Adress.Region,
+                          City = appartament.Adress.City,
+                          AppartmentNumber = appartament.Adress.AppartmentNumber,
+                          HouseNumber = appartament.Adress.HouseNumber,
+                          EntranceNumber = appartament.Adress.EntranceNumber,
+                          Street = appartament.Adress.Street
+                      });
 
-       
+
+                appartament.AppartamentId = connection.QuerySingle<int>(@"INSERT INTO Appartaments ([Price], [Name], [RoomNumber], [Area], [InternetProviderId], [AdressId], [AppartmentTypeId]) VALUES (@Price, @Name, @RoomNumber, @Area, @InternetProviderId, @AdressId, @AppartmentTypeId); SELECT CAST(SCOPE_IDENTITY() as int)",
+                   new
+                   {
+                       Price = appartament.Price,
+                       Name = appartament.Name,
+                       RoomNumber = appartament.RoomNumber,
+                       Area = appartament.Area,
+                       InternetProviderId = appartament.InternetProvider.InternetProviderId,
+                       AdressId = appartament.Adress.AdressId,
+                       AppartmentTypeId = appartament.AppartmentType.AppartmentTypeId
+                   });
+
+
+                StringBuilder stringBuilder = new StringBuilder();
+
+                foreach (var a in appartament.Amenites)
+                {
+                    stringBuilder.Append(@$"INSERT INTO AppartamentsAmenites ([AppartamentId], [AmenityId]) VALUES ({appartament.AppartamentId}, {a.AmenityId});");                  
+                }
+                    connection.Execute(stringBuilder.ToString());
+                return true;
+            }
+        }
+
     }
 }
-

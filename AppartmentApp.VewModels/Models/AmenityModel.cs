@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppartmentApp.VewModels.Amenites
 {
-   public class GetAmenityModel
+   public class AmenityModel
     {
         public int AmenityId { get; set; }
         public string Name { get; set; }

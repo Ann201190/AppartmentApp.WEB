@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppartmentApp.VewModels.InternetProviders
 {
-  public  class GetInternetProviderModel
+  public  class InternetProviderModel
    {
         public int InternetProviderId { get; set; }
         public string Name { get; set; }

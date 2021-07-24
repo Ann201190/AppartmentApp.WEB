@@ -9,17 +9,17 @@ using System.Text;
 
 namespace AppartmentApp.VewModels.Appartments
 {
-    public class GetAppartmentModel
+    public class GetAppartmentViewModel
     {
         public int Id { get; set; }
         public double Price { get; set; }
         public string Name { get; set; }
         public int RoomNumber { get; set; }
         public float Area { get; set; }
-        public GetInternetProviderModel InternetProvider { get; set; }
-        public GetAdressModel Adress { get; set; }
-        public GetAppartmentTypeModel TypeOfAppartment { get; set; }
-        public IEnumerable<GetAmenityModel> Amenites { get; set; } = new List<GetAmenityModel>();
+        public InternetProviderModel InternetProvider { get; set; }
+        public AdressModel Adress { get; set; }
+        public AppartmentTepyModel TypeOfAppartment { get; set; }
+        public IEnumerable<AmenityModel> Amenites { get; set; } = new List<AmenityModel>();
     }
 }
 

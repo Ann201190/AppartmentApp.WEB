@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace AppartmentApp.WEB.Controllers
 {
     [Route("api/[controller]")]
@@ -15,14 +16,22 @@ namespace AppartmentApp.WEB.Controllers
     {
         public readonly AppartmentsService _appartmentService;
         public AppartmentsController()
-        {           
+        {
             _appartmentService = new AppartmentsService(new AppartmentsRepository());
         }
 
         [HttpGet]
-        public IEnumerable<GetAppartmentModel> Get()
+        public IEnumerable<GetAppartmentViewModel> Get()
         {
             return _appartmentService.Get();
+        }
+
+        [HttpPost]
+        public bool Post([FromBody] PostAppartmentViewModel postAppartmentModel)
+        {
+            PostAppartmentViewModel postAppartmentModel1 =  postAppartmentModel;
+
+          return _appartmentService.Post(postAppartmentModel);
         }
     }
 }

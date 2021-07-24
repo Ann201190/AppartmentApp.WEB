@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppartmentApp.VewModels.Adresses
 {
-   public class GetAdressModel
+   public class AdressModel
     {
         public int AdressId { get; set; }
         public string Country { get; set; }
