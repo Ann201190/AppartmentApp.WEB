@@ -20,7 +20,7 @@ namespace AppartmentApp.DataAccess.Repositories
         {
             _appContext = new AppConnection();
         }
-        public  List<Appartament> Get()
+        public List<Appartament> Get()
         {
             using (var connection = new SqlConnection(_appContext._connectionString))
             {
@@ -40,12 +40,37 @@ namespace AppartmentApp.DataAccess.Repositories
                     return appartament;
                 }, splitOn: "InternetProviderId, AdressId, AppartmentTypeId, AmenityId");
 
-                var result =  data.GroupBy(a => a.AppartamentId).Select(g =>
+                var result = data.GroupBy(a => a.AppartamentId).Select(g =>
+               {
+                   var groupedAmenity = g.First();
+                   groupedAmenity.Amenites = g.Select(a => a.Amenites.Single()).ToList();
+                   return groupedAmenity;
+               }).ToList();
+
+                return result;
+            }
+        }
+
+        public Appartament Get(int appartamentId)
+        {
+            using (var connection = new SqlConnection(_appContext._connectionString))
+            {
+                var data = connection.Query<Appartament, InternetProvider, Adress, AppartmentType, Amenity, Appartament>("GetAppartament",
+                    (appartament, internetProvider, adress, appartmentType, amenity) =>
+                {
+                    appartament.InternetProvider = internetProvider;
+                    appartament.Adress = adress;
+                    appartament.AppartmentType = appartmentType;
+                    appartament.Amenites.Add(amenity);
+                    return appartament;
+                }, new { AppartamentId = appartamentId }, splitOn: "InternetProviderId, AdressId, AppartmentTypeId, AmenityId", commandType: CommandType.StoredProcedure).ToList();
+
+                var result = data.GroupBy(a => a.AppartamentId).Select(g =>
                 {
                     var groupedAmenity = g.First();
                     groupedAmenity.Amenites = g.Select(a => a.Amenites.Single()).ToList();
                     return groupedAmenity;
-                }).ToList();
+                }).FirstOrDefault();
 
                 return result;
             }
@@ -85,9 +110,9 @@ namespace AppartmentApp.DataAccess.Repositories
 
                 foreach (var a in appartament.Amenites)
                 {
-                    stringBuilder.Append(@$"INSERT INTO AppartamentsAmenites ([AppartamentId], [AmenityId]) VALUES ({appartament.AppartamentId}, {a.AmenityId});");                  
+                    stringBuilder.Append(@$"INSERT INTO AppartamentsAmenites ([AppartamentId], [AmenityId]) VALUES ({appartament.AppartamentId}, {a.AmenityId});");
                 }
-                    connection.Execute(stringBuilder.ToString());
+                connection.Execute(stringBuilder.ToString());
                 return true;
             }
         }

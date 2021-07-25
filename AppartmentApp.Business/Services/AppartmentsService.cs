@@ -12,7 +12,7 @@ using System.Text;
 
 namespace AppartmentApp.Business.Services
 {
-    public class AppartmentsService ///
+    public class AppartmentsService 
     {
         private readonly AppartmentsRepository _appartmentrepository;
         public AppartmentsService(AppartmentsRepository appartmentrepository)
@@ -73,6 +73,63 @@ namespace AppartmentApp.Business.Services
                 });
             }
             return models;
+        }
+
+
+        public GetAppartmentViewModel Get(int appartamentId)
+        {
+            var appartment = _appartmentrepository.Get(appartamentId);
+
+            var model = new GetAppartmentViewModel();
+
+            List<AmenityModel> amenityModel = new List<AmenityModel>();
+
+            foreach (var i in appartment.Amenites)
+            {
+                if (i != null)
+                {
+                    amenityModel.Add(new AmenityModel
+                    {
+                        Name = i.Name,
+                        AmenityId = i.AmenityId
+                    });
+                }
+            }
+
+            model = new GetAppartmentViewModel
+            {
+                Id = appartment.AppartamentId,
+                Name = appartment.Name,
+                Area = appartment.Area,
+                Amenites = amenityModel,
+                Adress = new AdressModel
+                {
+                    AdressId = appartment.Adress.AdressId,
+                    City = appartment.Adress.City,
+                    Country = appartment.Adress.Country,
+                    Region = appartment.Adress.Region,
+                    Street = appartment.Adress.Street,
+                    AppartmentNumber = appartment.Adress.AppartmentNumber,
+                    EntranceNumber = appartment.Adress.EntranceNumber,
+                    HouseNumber = appartment.Adress.HouseNumber
+                },
+                InternetProvider = new InternetProviderModel
+                {
+                    InternetProviderId = appartment.InternetProvider.InternetProviderId,
+                    Name = appartment.InternetProvider.Name
+                },
+
+                Price = appartment.Price,
+                RoomNumber = appartment.RoomNumber,
+
+                TypeOfAppartment = new AppartmentTepyModel
+                {
+                    AppartmentTypeId = appartment.AppartmentType.AppartmentTypeId,
+                    NameType = appartment.AppartmentType.NameType
+                }
+            };
+
+            return model;
         }
 
         public bool Post(PostAppartmentViewModel postAppartmentModel)

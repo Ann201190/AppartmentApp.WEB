@@ -26,6 +26,13 @@ namespace AppartmentApp.WEB.Controllers
             return _appartmentService.Get();
         }
 
+        [HttpGet("{Id}")]
+        public GetAppartmentViewModel Get(int Id)
+        {
+            return _appartmentService.Get(Id);
+        }
+
+
         [HttpPost]
         public bool Post([FromBody] PostAppartmentViewModel postAppartmentModel)
         {
