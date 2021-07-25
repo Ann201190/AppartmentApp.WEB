@@ -1,12 +1,8 @@
-﻿using AppartmentApp.VewModels.Adresses;
-using AppartmentApp.VewModels.Amenites;
-using AppartmentApp.VewModels.AppartmentTypes;
-using AppartmentApp.VewModels.InternetProviders;
-using System;
+﻿using AppartmentApp.VewModels.Models;
 using System.Collections.Generic;
-using System.Text;
 
-namespace AppartmentApp.VewModels.Appartments
+
+namespace AppartmentApp.VewModels.ViewModels
 {
   public  class PostAppartmentViewModel
     {

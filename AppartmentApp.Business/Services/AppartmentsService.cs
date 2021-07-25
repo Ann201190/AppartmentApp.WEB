@@ -1,14 +1,8 @@
 ﻿using AppartmentApp.DataAccess.Entities;
 using AppartmentApp.DataAccess.Repositories;
-using AppartmentApp.VewModels.Adresses;
-using AppartmentApp.VewModels.Amenites;
-using AppartmentApp.VewModels.Appartments;
-using AppartmentApp.VewModels.AppartmentTypes;
-using AppartmentApp.VewModels.InternetProviders;
-using System;
+using AppartmentApp.VewModels.Models;
+using AppartmentApp.VewModels.ViewModels;
 using System.Collections.Generic;
-using System.Text;
-
 
 namespace AppartmentApp.Business.Services
 {
@@ -36,10 +30,10 @@ namespace AppartmentApp.Business.Services
                         {
                             Name = i.Name,
                             AmenityId = i.AmenityId
-                        });
-                    }
+                        });            
+                    }           
                 }
-
+             
                 models.Add(new GetAppartmentViewModel
                 {
                     Id = item.AppartamentId,
@@ -64,26 +58,27 @@ namespace AppartmentApp.Business.Services
                     },
                     Price = item.Price,
                     RoomNumber = item.RoomNumber,
+                              
 
                     TypeOfAppartment = new AppartmentTepyModel
                     {
                         AppartmentTypeId = item.AppartmentType.AppartmentTypeId,
                         NameType = item.AppartmentType.NameType
-                    }
+                    },
                 });
             }
             return models;
         }
 
 
-        public GetAppartmentViewModel Get(int appartamentId)
+        public GetAppartmentIdViewModel Get(int appartamentId)
         {
             var appartment = _appartmentrepository.Get(appartamentId);
 
-            var model = new GetAppartmentViewModel();
+            var model = new GetAppartmentIdViewModel();
 
             List<AmenityModel> amenityModel = new List<AmenityModel>();
-
+            int amenityCount = 0;
             foreach (var i in appartment.Amenites)
             {
                 if (i != null)
@@ -93,10 +88,11 @@ namespace AppartmentApp.Business.Services
                         Name = i.Name,
                         AmenityId = i.AmenityId
                     });
+                    amenityCount = appartment.Amenites.Count;
                 }
             }
-
-            model = new GetAppartmentViewModel
+      
+            model = new GetAppartmentIdViewModel
             {
                 Id = appartment.AppartamentId,
                 Name = appartment.Name,
@@ -126,11 +122,16 @@ namespace AppartmentApp.Business.Services
                 {
                     AppartmentTypeId = appartment.AppartmentType.AppartmentTypeId,
                     NameType = appartment.AppartmentType.NameType
-                }
+                },
+
+                AmenityCount = amenityCount
+
             };
 
             return model;
         }
+
+   
 
         public bool Post(PostAppartmentViewModel postAppartmentModel)
         {
@@ -160,6 +161,8 @@ namespace AppartmentApp.Business.Services
                 });
             }
 
+
+         
             Appartament appartament = new Appartament()
             {
                 Name = postAppartmentModel.Name,

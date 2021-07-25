@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AppartmentApp.VewModels.Adresses
+﻿
+namespace AppartmentApp.VewModels.Models
 {
    public class AdressModel
     {

@@ -1,13 +1,8 @@
 ﻿using AppartmentApp.Business.Services;
-using AppartmentApp.DataAccess.Entities;
 using AppartmentApp.DataAccess.Repositories;
-using AppartmentApp.VewModels.Appartments;
+using AppartmentApp.VewModels.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 
 namespace AppartmentApp.WEB.Controllers
 {
@@ -27,11 +22,10 @@ namespace AppartmentApp.WEB.Controllers
         }
 
         [HttpGet("{Id}")]
-        public GetAppartmentViewModel Get(int Id)
+        public GetAppartmentIdViewModel Get(int Id)
         {
             return _appartmentService.Get(Id);
         }
-
 
         [HttpPost]
         public bool Post([FromBody] PostAppartmentViewModel postAppartmentModel)
@@ -39,6 +33,6 @@ namespace AppartmentApp.WEB.Controllers
             PostAppartmentViewModel postAppartmentModel1 =  postAppartmentModel;
 
           return _appartmentService.Post(postAppartmentModel);
-        }
+        }     
     }
 }

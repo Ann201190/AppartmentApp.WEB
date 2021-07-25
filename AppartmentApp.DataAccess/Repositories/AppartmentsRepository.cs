@@ -1,15 +1,11 @@
 ﻿using AppartmentApp.DataAccess.Connection;
 using AppartmentApp.DataAccess.Entities;
 using Dapper;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using Microsoft.Extensions.Primitives;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AppartmentApp.DataAccess.Repositories
 {
@@ -113,7 +109,17 @@ namespace AppartmentApp.DataAccess.Repositories
                     stringBuilder.Append(@$"INSERT INTO AppartamentsAmenites ([AppartamentId], [AmenityId]) VALUES ({appartament.AppartamentId}, {a.AmenityId});");
                 }
                 connection.Execute(stringBuilder.ToString());
-                return true;
+
+
+                if (appartament.AppartamentId!=null && appartament.AppartamentId!=null)
+                {
+                  return true;
+                }
+                else
+                {
+                    return false;
+                }
+            
             }
         }
 
