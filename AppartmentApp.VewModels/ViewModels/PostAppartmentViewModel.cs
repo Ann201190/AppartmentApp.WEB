@@ -6,7 +6,6 @@ namespace AppartmentApp.VewModels.ViewModels
 {
   public  class PostAppartmentViewModel
     {
-        public int AppartamentId { get; set; }
         public double Price { get; set; }
         public string Name { get; set; }
         public int RoomNumber { get; set; }

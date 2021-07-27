@@ -1,11 +1,13 @@
 ﻿using AppartmentApp.DataAccess.Connection;
 using AppartmentApp.DataAccess.Entities;
 using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace AppartmentApp.DataAccess.Repositories
 {
@@ -59,7 +61,10 @@ namespace AppartmentApp.DataAccess.Repositories
                     appartament.AppartmentType = appartmentType;
                     appartament.Amenites.Add(amenity);
                     return appartament;
-                }, new { AppartamentId = appartamentId }, splitOn: "InternetProviderId, AdressId, AppartmentTypeId, AmenityId", commandType: CommandType.StoredProcedure).ToList();
+                },
+                    new { AppartamentId = appartamentId },
+                    splitOn: "InternetProviderId, AdressId, AppartmentTypeId, AmenityId",
+                    commandType: CommandType.StoredProcedure).ToList();
 
                 var result = data.GroupBy(a => a.AppartamentId).Select(g =>
                 {
@@ -72,6 +77,54 @@ namespace AppartmentApp.DataAccess.Repositories
             }
         }
 
+        public bool Put(Appartament appartament)
+        {
+            using (var connection = new SqlConnection(_appContext._connectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var data = connection.Query<Appartament>("UpdateAppartament",
+                    new
+                    {
+                        AppartamentId = appartament.AppartamentId,
+                        Price = appartament.Price,
+                        Name = appartament.Name,
+                        RoomNumber = appartament.RoomNumber,
+                        Area = appartament.Area,
+                        InternetProviderId = appartament.InternetProvider.InternetProviderId,
+                        Country = appartament.Adress.Country,
+                        Region = appartament.Adress.Region,
+                        City = appartament.Adress.City,
+                        Street = appartament.Adress.Street,
+                        HouseNumber = appartament.Adress.HouseNumber,
+                        AppartmentTypeId = appartament.AppartmentType.AppartmentTypeId
+                    },
+                    commandType: CommandType.StoredProcedure, transaction: transaction);
+
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        if (appartament.Amenites != null)
+                        {
+                            stringBuilder.Append($@"DELETE from AppartamentsAmenites where AppartamentId = {appartament.AppartamentId}; ");
+                            foreach (var a in appartament.Amenites)
+                            {
+                                stringBuilder.Append(@$"INSERT INTO AppartamentsAmenites ([AppartamentId], [AmenityId]) VALUES ({appartament.AppartamentId}, {a.AmenityId});");
+                            }
+                            connection.Execute(stringBuilder.ToString(), transaction: transaction);
+                        }
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                    }
+                }
+                return true;
+            }
+        }
         public bool Post(Appartament appartament)
         {
             using (var connection = new SqlConnection(_appContext._connectionString))
@@ -87,7 +140,6 @@ namespace AppartmentApp.DataAccess.Repositories
                           EntranceNumber = appartament.Adress.EntranceNumber,
                           Street = appartament.Adress.Street
                       });
-
 
                 appartament.AppartamentId = connection.QuerySingle<int>(@"INSERT INTO Appartaments ([Price], [Name], [RoomNumber], [Area], [InternetProviderId], [AdressId], [AppartmentTypeId]) VALUES (@Price, @Name, @RoomNumber, @Area, @InternetProviderId, @AdressId, @AppartmentTypeId); SELECT CAST(SCOPE_IDENTITY() as int)",
                    new

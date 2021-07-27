@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AppartmentApp.Business.Services
 {
-    public class AppartmentsService 
+    public class AppartmentsService
     {
         private readonly AppartmentsRepository _appartmentrepository;
         public AppartmentsService(AppartmentsRepository appartmentrepository)
@@ -30,13 +30,13 @@ namespace AppartmentApp.Business.Services
                         {
                             Name = i.Name,
                             AmenityId = i.AmenityId
-                        });            
-                    }           
+                        });
+                    }
                 }
-             
+
                 models.Add(new GetAppartmentViewModel
                 {
-                    Id = item.AppartamentId,
+                    AppartamentId = item.AppartamentId,
                     Name = item.Name,
                     Area = item.Area,
                     Amenites = amenityModel,
@@ -58,7 +58,7 @@ namespace AppartmentApp.Business.Services
                     },
                     Price = item.Price,
                     RoomNumber = item.RoomNumber,
-                              
+
 
                     TypeOfAppartment = new AppartmentTepyModel
                     {
@@ -70,6 +70,53 @@ namespace AppartmentApp.Business.Services
             return models;
         }
 
+        public bool Put(PutAppartmentViewModel putAppartmentModel)
+        {
+            AppartmentType appartmentType = new AppartmentType();
+            appartmentType.AppartmentTypeId = putAppartmentModel.AppartmentTypeId;
+
+            InternetProvider internetProvider = new InternetProvider();
+            internetProvider.InternetProviderId = putAppartmentModel.InternetProviderId;
+
+            Adress adress = new Adress();
+            if (putAppartmentModel.Adress != null)
+            {
+                adress.City = putAppartmentModel.Adress.City;
+                adress.Country = putAppartmentModel.Adress.Country;
+                adress.Region = putAppartmentModel.Adress.Region;
+                adress.Street = putAppartmentModel.Adress.Street;
+                adress.AppartmentNumber = putAppartmentModel.Adress.AppartmentNumber;
+                adress.EntranceNumber = putAppartmentModel.Adress.EntranceNumber;
+                adress.HouseNumber = putAppartmentModel.Adress.HouseNumber;                
+            }
+
+
+            List<Amenity> amenity = new List<Amenity>();
+            foreach (var a in putAppartmentModel.AmenityId)
+            {
+                amenity.Add(new Amenity()
+                {
+                    AmenityId = a,
+                });
+            }
+
+
+
+            Appartament appartament = new Appartament()
+            {
+                AppartamentId = putAppartmentModel.AppartamentId,
+                Name = putAppartmentModel.Name,
+                Area = putAppartmentModel.Area,
+                Price = putAppartmentModel.Price,
+                RoomNumber = putAppartmentModel.RoomNumber,
+                Amenites = amenity,
+                Adress = adress,
+                AppartmentType = appartmentType,
+                InternetProvider = internetProvider,
+            };
+
+            return _appartmentrepository.Put(appartament);
+        }
 
         public GetAppartmentIdViewModel Get(int appartamentId)
         {
@@ -91,10 +138,10 @@ namespace AppartmentApp.Business.Services
                     amenityCount = appartment.Amenites.Count;
                 }
             }
-      
+
             model = new GetAppartmentIdViewModel
             {
-                Id = appartment.AppartamentId,
+                AppartamentId = appartment.AppartamentId,
                 Name = appartment.Name,
                 Area = appartment.Area,
                 Amenites = amenityModel,
@@ -131,8 +178,6 @@ namespace AppartmentApp.Business.Services
             return model;
         }
 
-   
-
         public bool Post(PostAppartmentViewModel postAppartmentModel)
         {
             AppartmentType appartmentType = new AppartmentType();
@@ -162,7 +207,7 @@ namespace AppartmentApp.Business.Services
             }
 
 
-         
+
             Appartament appartament = new Appartament()
             {
                 Name = postAppartmentModel.Name,

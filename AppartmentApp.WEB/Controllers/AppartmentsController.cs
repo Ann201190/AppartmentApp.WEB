@@ -30,9 +30,14 @@ namespace AppartmentApp.WEB.Controllers
         [HttpPost]
         public bool Post([FromBody] PostAppartmentViewModel postAppartmentModel)
         {
-            PostAppartmentViewModel postAppartmentModel1 =  postAppartmentModel;
-
           return _appartmentService.Post(postAppartmentModel);
-        }     
+        }
+
+        [HttpPut]
+        public bool Put([FromBody] PutAppartmentViewModel putAppartmentModel)
+        {        
+            return _appartmentService.Put(putAppartmentModel);
+        }
+
     }
 }
